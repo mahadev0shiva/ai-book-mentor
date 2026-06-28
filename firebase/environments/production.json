@@ -1,0 +1,19 @@
+{
+  "environment": "production",
+  "projectId": "aistudio-book-study-prod",
+  "auth": {
+    "allowAnonymous": false,
+    "requireEmailVerification": true
+  },
+  "features": {
+    "enableOcrPipeline": true,
+    "enableIllustrationGeneration": true,
+    "maxUploadSizeMb": 250,
+    "rateLimitRequestsPerMin": 300
+  },
+  "gemini": {
+    "defaultModel": "gemini-3.5-flash",
+    "reasoningModel": "gemini-3.1-pro-preview",
+    "maxTokens": 16384
+  }
+}

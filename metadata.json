@@ -1,0 +1,6 @@
+{
+  "name": "Book Study Companion",
+  "description": "An AI-powered book study and interactive tutoring companion.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

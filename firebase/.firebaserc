@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "aistudio-book-study-dev",
+    "development": "aistudio-book-study-dev",
+    "staging": "aistudio-book-study-staging",
+    "production": "aistudio-book-study-prod"
+  }
+}

@@ -1,0 +1,78 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Auth Validation Helpers
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && exists(/databases/$(database)/documents/admin_users/$(request.auth.uid));
+    }
+
+    // --- Users Root Route ---
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+      
+      match /settings/{settingId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      match /learning_preferences/{preferenceId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      match /bookmarks/{bookmarkId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      match /highlights/{highlightId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      match /notes/{noteId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      match /ai_chats/{chatId} {
+        allow read, write: if isOwner(userId);
+        
+        match /ai_messages/{msgId} {
+          allow read, write: if isOwner(userId);
+        }
+      }
+      
+      match /sync_queue/{eventId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // --- Books Master Catalog Route ---
+    match /books/{bookId} {
+      allow read: if isAuthenticated() && (resource.data.isPublicDomain == true || resource.data.createdByUserId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && (resource.data.createdByUserId == request.auth.uid || isAdmin());
+      
+      match /chapters/{chapterId} {
+        allow read: if isAuthenticated();
+        allow write: if isAdmin() || (get(/databases/$(database)/documents/books/$(bookId)).data.createdByUserId == request.auth.uid);
+      }
+      
+      match /quizzes/{quizId} {
+        allow read: if isAuthenticated();
+        allow write: if isAdmin() || (get(/databases/$(database)/documents/books/$(bookId)).data.createdByUserId == request.auth.uid);
+      }
+    }
+    
+    // --- Admin Control Route ---
+    match /admin_users/{adminId} {
+      allow read: if isAdmin();
+      allow write: if false; // System provisioned only
+    }
+  }
+}
